@@ -1,0 +1,5 @@
+<launch>
+    <node name="slam" pkg="gmapping" type="slam_gmapping" respawn="false"
+           output="screen">
+    </node>
+</launch>

@@ -1,0 +1,5 @@
+<launch>
+    <node name="map_switcher_service" pkg="map_interaction" type="map_switcher_service.py" output="screen"/>
+    <node name="map_switch_interactive" pkg="map_interaction" type="map_switch_interactive.py" output="screen"/>
+    <node name="map_save_interactive"   pkg="map_interaction" type="map_save_interactive.py"   output="screen"/>
+</launch>

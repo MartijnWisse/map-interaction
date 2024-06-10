@@ -1,13 +1,20 @@
 #!/usr/bin/env python
 
+import roslaunch
 import rospy
+import rospkg
 from map_interaction.srv import SwitchMap, SwitchMapRequest, SwitchMapResponse
 from map_interaction.srv import SwitchMapInteractively, SwitchMapInteractivelyResponse
 import os
 import tkinter as tk
 from tkinter import simpledialog
 
-MAPS_DIR = "/home/mwisse/mirte_ws/src/mirte-ros-packages/ridgeback/ridgeback_navigation/maps"
+# Find the path to our own package  (is that necessary?)
+rospack = rospkg.RosPack()
+package_path = rospack.get_path('map_interaction')
+MAPS_DIR = package_path + "/maps"
+
+#MAPS_DIR = "/home/mwisse/mirte_ws/src/mirte-ros-packages/ridgeback/ridgeback_navigation/maps"
 
 def get_available_maps():
     maps = []
@@ -56,6 +63,7 @@ def show_popup(maps):
     dialog = MapSelectionDialog(root, maps)
     selected_map = dialog.selected_map
     root.quit()
+    root.destroy()
     return selected_map
 
 def handle_switch_map_interactively(req):
@@ -63,6 +71,9 @@ def handle_switch_map_interactively(req):
     selected_map = show_popup(maps)
     if selected_map == "new map":
         rospy.loginfo("new map being created")
+        map_file = package_path + "/maps/newmap.yaml"
+        rospy.set_param('map_file', map_file)
+        success = switch_map(map_file)
         return SwitchMapInteractivelyResponse(success=True)
     elif selected_map in maps:
         map_file = os.path.join(MAPS_DIR, selected_map)
