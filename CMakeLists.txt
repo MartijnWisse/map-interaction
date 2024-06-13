@@ -9,6 +9,8 @@ project(map_interaction)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   actionlib
+  actionlib_msgs
+  move_base_msgs
   geometry_msgs
   nav_msgs
   roscpp
@@ -67,15 +69,16 @@ add_service_files(
 )
 
 ## Generate actions in the 'action' folder
-# add_action_files(
-#   FILES
-#   Action1.action
-#   Action2.action
-# )
+add_action_files(
+  FILES
+  InspectHolonomic.action
+)
 
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
+  actionlib_msgs
+  geometry_msgs
   std_msgs
 )
 
@@ -111,7 +114,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES map_interaction
- CATKIN_DEPENDS actionlib geometry_msgs nav_msgs roscpp rospy sensor_msgs std_msgs
+ CATKIN_DEPENDS actionlib geometry_msgs nav_msgs roscpp rospy sensor_msgs std_msgs actionlib actionlib_msgs move_base_msgs
 #  DEPENDS system_lib
 )
 
