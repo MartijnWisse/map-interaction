@@ -6,11 +6,23 @@ import os
 import tkinter as tk
 from tkinter import simpledialog
 from std_srvs.srv import Trigger, TriggerResponse
+from map_interaction.srv import SwitchMap, SwitchMapRequest, SwitchMapResponse
+from map_interaction.srv import SwitchMapInteractively, SwitchMapInteractivelyResponse
 
 # Find the path to the map_interaction package
 rospack = rospkg.RosPack()
 package_path = rospack.get_path('map_interaction')
 MAPS_DIR = os.path.join(package_path, "maps")
+
+def switch_map(map_file):
+    rospy.wait_for_service('switch_map')
+    try:
+        switch_map_service = rospy.ServiceProxy('switch_map', SwitchMap)
+        response = switch_map_service(map_file)
+        return response.success
+    except rospy.ServiceException as e:
+        rospy.logerr(f"Service call failed: {e}")
+        return False
 
 def get_available_maps():
     maps = []
@@ -30,12 +42,12 @@ class MapSaveDialog(simpledialog.Dialog):
         super().__init__(parent, title="Save Map")
 
     def body(self, master):
-        tk.Label(master, text="Provide map name (without extension). If this map already exists, it will be overwritten.").pack()
-        tk.Label(master, text="Existing maps:").pack()
+        tk.Label(master, text="Provide map name (without extension). If this map already exists, it will be overwritten.", font=("Helvetica", 20)).pack()
+        tk.Label(master, text="Existing maps:", font=("Helvetica", 20)).pack()
         for map_name in self.maps:
-            tk.Label(master, text=map_name).pack()
-        self.entry = tk.Entry(master)
-        self.entry.pack(padx=5, pady=5)
+            tk.Label(master, text=map_name, font=("Helvetica", 20)).pack()
+        self.entry = tk.Entry(master, font=("Helvetica", 20))
+        self.entry.pack(padx=10, pady=10)
         return self.entry
 
     def apply(self):
@@ -55,6 +67,12 @@ def handle_save_map_interactively(req):
     map_name = show_save_dialog(maps)
     if map_name:
         save_map(map_name)
+
+        #switch immediately to the new map and start localizing and planning
+        map_file = MAPS_DIR + "/" + map_name + ".yaml"
+        print(map_file)
+        rospy.set_param('map_file', map_file)
+        success = switch_map(map_file)        
         return TriggerResponse(success=True, message="Map saved successfully.")
     else:
         rospy.logwarn("No map name provided")

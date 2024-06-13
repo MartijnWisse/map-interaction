@@ -40,10 +40,10 @@ class MapSelectionDialog(simpledialog.Dialog):
         super().__init__(parent, title="Switch Map")
 
     def body(self, master):
-        tk.Label(master, text="Switch map to:").pack()
+        tk.Label(master, text="Switch map to:", font=("Helvetica", 20)).pack()
 
-        self.listbox = tk.Listbox(master)
-        self.listbox.pack(padx=5, pady=5)
+        self.listbox = tk.Listbox(master, font=("Helvetica", 20))
+        self.listbox.pack(padx=10, pady=10)
 
         # Add the options to the listbox
         self.listbox.insert(tk.END, "new map")

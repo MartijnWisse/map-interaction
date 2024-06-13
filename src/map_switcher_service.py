@@ -5,6 +5,10 @@ import roslaunch
 import rospkg
 from map_interaction.srv import SwitchMap, SwitchMapResponse
 import os
+import rosparam
+import rosservice
+import subprocess
+
 
 class MapSwitcher:
     def __init__(self):
